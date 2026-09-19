@@ -1,4 +1,4 @@
-# Robot Camera Control, (Radxa Zero)
+# Robot Camera Control, (Raspberry PI Zero)
 
 Proyecto Flask para Raspberry Pi con:
 
