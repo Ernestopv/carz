@@ -1,4 +1,4 @@
-# Robot Camera Control, (Raspberry PI Zero)
+# Robot Camera Control, (Raspberry PI Zero W)
 
 Proyecto Flask para Raspberry Pi con:
 
