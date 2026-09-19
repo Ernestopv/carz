@@ -1,0 +1,106 @@
+<!doctype html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Robot Control</title>
+    <link
+      rel="stylesheet"
+      href="{{ url_for('static', filename='style.css') }}"
+    />
+  </head>
+  <body>
+    <main class="app">
+      <header class="header">
+        <div>
+          <h1>Carz</h1>
+        </div>
+
+        <div class="status">
+          <span id="statusDot" class="status-dot"></span>
+          <span id="statusText">Conectando...</span>
+        </div>
+      </header>
+
+      <section class="camera-card">
+        <img
+          id="camera"
+          src="/stream"
+          alt="Cámara del robot"
+          draggable="false"
+        />
+      </section>
+
+      <section class="control-panel">
+        <div class="power-card">
+          <div class="power-header">
+            <span>Potencia</span>
+            <strong><span id="powerValue">50</span>%</strong>
+          </div>
+
+          <input
+            id="power"
+            type="range"
+            min="0"
+            max="100"
+            value="50"
+            step="5"
+          />
+        </div>
+
+        <div class="dpad">
+          <button
+            class="control-button forward"
+            data-direction="forward"
+            aria-label="Adelante"
+          >
+            ▲
+          </button>
+
+          <button
+            class="control-button left"
+            data-direction="left"
+            aria-label="Izquierda"
+          >
+            ◀
+          </button>
+
+          <button
+            id="stopButton"
+            class="control-button stop"
+            aria-label="Detener"
+          >
+            ■
+          </button>
+
+          <button
+            class="control-button right"
+            data-direction="right"
+            aria-label="Derecha"
+          >
+            ▶
+          </button>
+
+          <button
+            class="control-button backward"
+            data-direction="backward"
+            aria-label="Atrás"
+          >
+            ▼
+          </button>
+        </div>
+
+        <div class="help">
+          <span>Teclado:</span>
+          <kbd>W</kbd>
+          <kbd>A</kbd>
+          <kbd>S</kbd>
+          <kbd>D</kbd>
+          <span>o flechas</span>
+        </div>
+      </section>
+    </main>
+
+    <script src="{{ url_for('static', filename='app.js') }}"></script>
+  </body>
+</html>
