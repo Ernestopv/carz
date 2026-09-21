@@ -3,12 +3,15 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Robot Control</title>
+
+    <title>Carz</title>
+
     <link
       rel="stylesheet"
       href="{{ url_for('static', filename='style.css') }}"
     />
   </head>
+
   <body>
     <main class="app">
       <header class="header">
@@ -22,16 +25,22 @@
         </div>
       </header>
 
+      <!-- CAMARA -->
+
       <section class="camera-card">
         <img
           id="camera"
           src="/stream"
-          alt="Cámara del robot"
+          alt="Camara del robot"
           draggable="false"
         />
       </section>
 
+      <!-- CONTROLES -->
+
       <section class="control-panel">
+        <!-- POTENCIA -->
+
         <div class="power-card">
           <div class="power-header">
             <span>Potencia</span>
@@ -45,11 +54,16 @@
             max="100"
             value="50"
             step="5"
+            tabindex="-1"
+            aria-label="Potencia del motor"
           />
         </div>
 
+        <!-- DIRECCIONES -->
+
         <div class="dpad">
           <button
+            type="button"
             class="control-button forward"
             data-direction="forward"
             aria-label="Adelante"
@@ -58,6 +72,7 @@
           </button>
 
           <button
+            type="button"
             class="control-button left"
             data-direction="left"
             aria-label="Izquierda"
@@ -66,6 +81,7 @@
           </button>
 
           <button
+            type="button"
             id="stopButton"
             class="control-button stop"
             aria-label="Detener"
@@ -74,6 +90,7 @@
           </button>
 
           <button
+            type="button"
             class="control-button right"
             data-direction="right"
             aria-label="Derecha"
@@ -82,13 +99,16 @@
           </button>
 
           <button
+            type="button"
             class="control-button backward"
             data-direction="backward"
-            aria-label="Atrás"
+            aria-label="Atras"
           >
             ▼
           </button>
         </div>
+
+        <!-- AYUDA -->
 
         <div class="help">
           <span>Teclado:</span>
