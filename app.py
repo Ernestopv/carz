@@ -84,7 +84,11 @@ class Settings:
         motor2_calibration: Factor de correccion del motor derecho.
         camera_width: Ancho del stream en pixeles.
         camera_height: Alto del stream en pixeles.
-        camera_fps: Fotogramas por segundo objetivo.
+        camera_fps: Fotogramas por segundo maximos (duracion de frame
+            minima de la auto-exposicion).
+        camera_min_fps: Fotogramas por segundo minimos; marca la
+            duracion de frame maxima que la auto-exposicion puede usar
+            en condiciones de poca luz.
         camera_index: Indice de la camara a abrir.
         camera_buffer_count: Numero de buffers de la camara (menos es
             menos latencia).
@@ -103,6 +107,7 @@ class Settings:
     camera_width: int = 320
     camera_height: int = 240
     camera_fps: int = 60
+    camera_min_fps: int = 5
     camera_index: int = 0
     camera_buffer_count: int = 2
 
@@ -430,7 +435,8 @@ class CameraStream:
                 print("[CAMERA] No se ha detectado ninguna camara.")
                 return
 
-            frame_interval_us = int(1_000_000 / self._settings.camera_fps)
+            shortest_frame_us = int(1_000_000 / self._settings.camera_fps)
+            longest_frame_us = int(1_000_000 / self._settings.camera_min_fps)
 
             picam = Picamera2(self._settings.camera_index)
             config = picam.create_video_configuration(
@@ -442,11 +448,13 @@ class CameraStream:
                     "format": "YUV420",
                 },
                 controls={
-                    "FrameRate": self._settings.camera_fps,
-                    # Cadencia fija -> menos jitter y menos latencia maxima.
+                    # Rango de duracion de frame: la auto-exposicion puede
+                    # alargar el tiempo de exposicion (bajando el fps) cuando
+                    # hay poca luz, en vez de quedar la imagen oscura por un
+                    # periodo fijo demasiado corto.
                     "FrameDurationLimits": (
-                        frame_interval_us,
-                        frame_interval_us,
+                        shortest_frame_us,
+                        longest_frame_us,
                     ),
                 },
                 buffer_count=self._settings.camera_buffer_count,
