@@ -86,6 +86,8 @@ class Settings:
         camera_height: Alto del stream en pixeles.
         camera_fps: Fotogramas por segundo objetivo.
         camera_index: Indice de la camara a abrir.
+        camera_buffer_count: Numero de buffers de la camara (menos es
+            menos latencia).
         left_forward_pin: GPIO forward del motor izquierdo.
         left_backward_pin: GPIO backward del motor izquierdo.
         right_forward_pin: GPIO forward del motor derecho.
@@ -102,6 +104,7 @@ class Settings:
     camera_height: int = 360
     camera_fps: int = 24
     camera_index: int = 0
+    camera_buffer_count: int = 2
 
     left_forward_pin: int = 9
     left_backward_pin: int = 10
@@ -427,6 +430,8 @@ class CameraStream:
                 print("[CAMERA] No se ha detectado ninguna camara.")
                 return
 
+            frame_interval_us = int(1_000_000 / self._settings.camera_fps)
+
             picam = Picamera2(self._settings.camera_index)
             config = picam.create_video_configuration(
                 main={
@@ -436,8 +441,15 @@ class CameraStream:
                     ),
                     "format": "YUV420",
                 },
-                controls={"FrameRate": self._settings.camera_fps},
-                buffer_count=2,
+                controls={
+                    "FrameRate": self._settings.camera_fps,
+                    # Cadencia fija -> menos jitter y menos latencia maxima.
+                    "FrameDurationLimits": (
+                        frame_interval_us,
+                        frame_interval_us,
+                    ),
+                },
+                buffer_count=self._settings.camera_buffer_count,
             )
             picam.configure(config)
             picam.start_recording(MJPEGEncoder(), FileOutput(self._output))

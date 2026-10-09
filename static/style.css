@@ -204,7 +204,8 @@ output {
         inset 0 1px 0 rgba(255, 255, 255, 0.04);
 }
 
-.viewport-frame img {
+.viewport-frame img,
+.viewport-frame canvas {
     display: block;
     width: 100%;
     height: 100%;

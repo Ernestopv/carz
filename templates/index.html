@@ -56,12 +56,13 @@
           aria-label="Vista de la cámara"
         >
           <div class="viewport-frame">
-            <img
+            <canvas
               id="camera"
-              src="/stream"
-              alt="Transmisión en vivo de la cámara del rover"
-              draggable="false"
-            />
+              width="480"
+              height="360"
+              role="img"
+              aria-label="Transmisión en vivo de la cámara del rover"
+            ></canvas>
 
             <div class="viewport-osd" aria-hidden="true">
               <span class="tally">

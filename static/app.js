@@ -56,15 +56,138 @@ renderPower(powerSlider.value);
 
 // ============================================================
 // CAMARA
+//
+// Lee el MJPEG con fetch y pinta SIEMPRE el ultimo frame en un
+// canvas. Evita el buffering interno del <img>, que es la mayor
+// fuente de retardo en un stream MJPEG.
 // ============================================================
 
-camera.addEventListener("load", () => {
-  viewport.classList.remove("no-signal");
+const cameraContext = camera.getContext("2d", { alpha: false });
+
+const JPEG_SOI = 0xffd8;
+const JPEG_EOI = 0xffd9;
+
+let latestFrame = null;
+let decoding = false;
+let streamActive = true;
+
+function setSignal(available) {
+  viewport.classList.toggle("no-signal", !available);
+}
+
+function findMarker(buffer, marker, from) {
+  const high = marker >> 8;
+  const low = marker & 0xff;
+
+  for (let i = from; i + 1 < buffer.length; i += 1) {
+    if (buffer[i] === high && buffer[i + 1] === low) {
+      return i;
+    }
+  }
+
+  return -1;
+}
+
+function extractFrames(buffer) {
+  let offset = 0;
+
+  while (true) {
+    const start = findMarker(buffer, JPEG_SOI, offset);
+
+    if (start < 0) {
+      offset = Math.max(0, buffer.length - 1);
+      break;
+    }
+
+    const end = findMarker(buffer, JPEG_EOI, start + 2);
+
+    if (end < 0) {
+      offset = start;
+      break;
+    }
+
+    // Solo conservamos el frame mas reciente de este lote.
+    latestFrame = buffer.slice(start, end + 2);
+    offset = end + 2;
+  }
+
+  drawLatestFrame();
+
+  return buffer.slice(offset);
+}
+
+async function drawLatestFrame() {
+  if (decoding || latestFrame === null) {
+    return;
+  }
+
+  decoding = true;
+  const frame = latestFrame;
+  latestFrame = null;
+
+  try {
+    const bitmap = await createImageBitmap(
+      new Blob([frame], { type: "image/jpeg" }),
+    );
+
+    if (camera.width !== bitmap.width || camera.height !== bitmap.height) {
+      camera.width = bitmap.width;
+      camera.height = bitmap.height;
+    }
+
+    cameraContext.drawImage(bitmap, 0, 0);
+    bitmap.close();
+    setSignal(true);
+  } catch (error) {
+    // Frame incompleto o corrupto: se descarta.
+  } finally {
+    decoding = false;
+
+    if (latestFrame !== null) {
+      drawLatestFrame();
+    }
+  }
+}
+
+async function streamLoop() {
+  try {
+    const response = await fetch("/stream", { cache: "no-store" });
+
+    if (!response.ok || !response.body) {
+      throw new Error(`stream ${response.status}`);
+    }
+
+    const reader = response.body.getReader();
+    let buffer = new Uint8Array(0);
+
+    while (streamActive) {
+      const { value, done } = await reader.read();
+
+      if (done) {
+        break;
+      }
+
+      const merged = new Uint8Array(buffer.length + value.length);
+      merged.set(buffer, 0);
+      merged.set(value, buffer.length);
+      buffer = extractFrames(merged);
+    }
+  } catch (error) {
+    console.error("Stream de camara:", error);
+  }
+
+  setSignal(false);
+
+  if (streamActive) {
+    setTimeout(streamLoop, 1000);
+  }
+}
+
+window.addEventListener("pagehide", () => {
+  streamActive = false;
 });
 
-camera.addEventListener("error", () => {
-  viewport.classList.add("no-signal");
-});
+streamLoop();
 
 // ============================================================
 // MODO NOCTURNO
