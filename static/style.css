@@ -74,8 +74,11 @@ output {
 .console {
     width: min(100%, 1080px);
     margin: 0 auto;
-    padding: 22px;
-    padding-bottom: max(22px, env(safe-area-inset-bottom));
+    padding: clamp(16px, 2.4vw, 26px);
+    padding-bottom: max(
+        clamp(16px, 2.4vw, 26px),
+        env(safe-area-inset-bottom)
+    );
     animation: rise 0.5s cubic-bezier(0.2, 0.7, 0.2, 1) both;
 }
 
@@ -183,8 +186,10 @@ output {
 
 .stage {
     display: grid;
-    gap: 16px;
-    grid-template-columns: minmax(0, 1.55fr) minmax(320px, 1fr);
+    gap: clamp(14px, 2vw, 22px);
+    /* Columna de instrumentos estable: el visor absorbe el espacio
+       sobrante y el deck conserva una proporcion de consola. */
+    grid-template-columns: minmax(0, 1fr) minmax(340px, 400px);
     align-items: start;
 }
 
@@ -317,8 +322,8 @@ output {
 .deck {
     display: flex;
     flex-direction: column;
-    gap: 22px;
-    padding: 20px;
+    gap: clamp(18px, 2.2vw, 24px);
+    padding: clamp(16px, 2vw, 22px);
     border-radius: var(--radius);
     background: linear-gradient(
         180deg,
