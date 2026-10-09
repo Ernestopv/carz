@@ -100,9 +100,9 @@ class Settings:
     motor1_calibration: float = 0.60
     motor2_calibration: float = 1.00
 
-    camera_width: int = 480
-    camera_height: int = 360
-    camera_fps: int = 24
+    camera_width: int = 320
+    camera_height: int = 240
+    camera_fps: int = 60
     camera_index: int = 0
     camera_buffer_count: int = 2
 
