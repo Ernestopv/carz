@@ -4,6 +4,11 @@ const stopButton = document.getElementById("stopButton");
 const controlButtons = document.querySelectorAll("[data-direction]");
 const statusDot = document.getElementById("statusDot");
 const statusText = document.getElementById("statusText");
+const throttleFill = document.getElementById("throttleFill");
+const osdPower = document.getElementById("osdPower");
+const camera = document.getElementById("camera");
+const viewport = document.getElementById("viewport");
+const nightToggle = document.getElementById("nightToggle");
 
 let activeDirection = null;
 let pingTimer = null;
@@ -29,8 +34,14 @@ powerSlider.addEventListener("focus", () => {
   powerSlider.blur();
 });
 
+function renderPower(value) {
+  powerValue.textContent = value;
+  osdPower.textContent = value;
+  throttleFill.style.width = `${value}%`;
+}
+
 powerSlider.addEventListener("input", () => {
-  powerValue.textContent = powerSlider.value;
+  renderPower(powerSlider.value);
 
   if (activeDirection) {
     sendMove(activeDirection);
@@ -40,6 +51,50 @@ powerSlider.addEventListener("input", () => {
 function currentPower() {
   return Number(powerSlider.value);
 }
+
+renderPower(powerSlider.value);
+
+// ============================================================
+// CAMARA
+// ============================================================
+
+camera.addEventListener("load", () => {
+  viewport.classList.remove("no-signal");
+});
+
+camera.addEventListener("error", () => {
+  viewport.classList.add("no-signal");
+});
+
+// ============================================================
+// MODO NOCTURNO
+// ============================================================
+
+function applyNightMode(enabled) {
+  document.body.classList.toggle("night", enabled);
+  nightToggle.setAttribute("aria-pressed", String(enabled));
+}
+
+let nightMode = false;
+
+try {
+  nightMode = window.localStorage.getItem("carz-night") === "1";
+} catch (error) {
+  nightMode = false;
+}
+
+applyNightMode(nightMode);
+
+nightToggle.addEventListener("click", () => {
+  nightMode = !nightMode;
+  applyNightMode(nightMode);
+
+  try {
+    window.localStorage.setItem("carz-night", nightMode ? "1" : "0");
+  } catch (error) {
+    // localStorage puede no estar disponible en algunos contextos.
+  }
+});
 
 // ============================================================
 // PETICIONES HTTP

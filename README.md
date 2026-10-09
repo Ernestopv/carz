@@ -84,6 +84,32 @@ Health:
 http://IP:5000/api/health
 ```
 
+## Estructura de `app.py`
+
+- `Settings`: configuración (pines, calibraciones, cámara, red).
+- `MotorController`: aplica calibración, movimiento y watchdog.
+- `CameraStream`: captura MJPEG con Picamera2.
+- `create_app()`: construye la app Flask con el hardware inyectado.
+- `main()`: arranca cámara, watchdog y servidor.
+
+La lógica está desacoplada del hardware mediante los protocolos
+`MotorLike` y `CameraLike`, de modo que se puede probar sin Raspberry Pi.
+
+## Desarrollo
+
+```bash
+pip install -r requirements-dev.txt
+
+black .
+ruff check .
+mypy app.py tests
+pytest --cov=app
+```
+
+La suite verifica calibración, watchdog, rutas HTTP y formateo MJPEG.
+El código que solo puede ejecutarse en la Pi está marcado con
+`# pragma: no cover`.
+
 ## Importante
 
 Prueba primero con las ruedas levantadas. Si un motor gira al revés, invierte sus GPIO `forward` y `backward` en `app.py`.

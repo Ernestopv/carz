@@ -2,9 +2,13 @@
 <html lang="es">
   <head>
     <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1.0, viewport-fit=cover"
+    />
+    <meta name="theme-color" content="#0a1015" />
 
-    <title>Carz</title>
+    <title>Carz · Control del rover</title>
 
     <link
       rel="stylesheet"
@@ -13,113 +17,165 @@
   </head>
 
   <body>
-    <main class="app">
-      <header class="header">
-        <div>
+    <div class="console">
+      <!-- ================= BARRA SUPERIOR ================= -->
+
+      <header class="rail">
+        <div class="brand">
           <h1>Carz</h1>
+          <p>Control del rover</p>
         </div>
 
-        <div class="status">
-          <span id="statusDot" class="status-dot"></span>
-          <span id="statusText">Conectando...</span>
+        <div class="rail-actions">
+          <div class="link">
+            <span id="statusDot" class="link-dot" aria-hidden="true"></span>
+            <span id="statusText" class="link-text" role="status">
+              Conectando…
+            </span>
+          </div>
+
+          <button
+            id="nightToggle"
+            class="icon-button"
+            type="button"
+            aria-pressed="false"
+            aria-label="Modo nocturno"
+            title="Modo nocturno"
+          >
+            <span class="icon-button-glyph" aria-hidden="true">☾</span>
+          </button>
         </div>
       </header>
 
-      <!-- CAMARA -->
+      <main class="stage">
+        <!-- ================= VISOR ================= -->
 
-      <section class="camera-card">
-        <img
-          id="camera"
-          src="/stream"
-          alt="Camara del robot"
-          draggable="false"
-        />
-      </section>
+        <section
+          id="viewport"
+          class="viewport"
+          aria-label="Vista de la cámara"
+        >
+          <div class="viewport-frame">
+            <img
+              id="camera"
+              src="/stream"
+              alt="Transmisión en vivo de la cámara del rover"
+              draggable="false"
+            />
 
-      <!-- CONTROLES -->
+            <div class="viewport-osd" aria-hidden="true">
+              <span class="tally">
+                <span class="tally-dot"></span>
+                En vivo
+              </span>
 
-      <section class="control-panel">
-        <!-- POTENCIA -->
+              <span class="osd-readout">
+                <span id="osdPower">50</span>%
+              </span>
+            </div>
 
-        <div class="power-card">
-          <div class="power-header">
-            <span>Potencia</span>
-            <strong><span id="powerValue">50</span>%</strong>
+            <div class="viewport-alert" role="alert">
+              <span>Sin señal de cámara</span>
+            </div>
+          </div>
+        </section>
+
+        <!-- ================= DECK DE CONTROL ================= -->
+
+        <section class="deck" aria-label="Controles del rover">
+          <!-- POTENCIA -->
+
+          <div class="throttle">
+            <div class="throttle-head">
+              <label for="power">Potencia</label>
+
+              <output class="throttle-value" for="power">
+                <span id="powerValue">50</span
+                ><span class="unit">%</span>
+              </output>
+            </div>
+
+            <div class="throttle-track">
+              <div class="throttle-fill" id="throttleFill"></div>
+              <div class="throttle-ticks" aria-hidden="true"></div>
+
+              <input
+                id="power"
+                type="range"
+                min="0"
+                max="100"
+                value="50"
+                step="5"
+                tabindex="-1"
+                aria-label="Potencia del motor"
+              />
+            </div>
           </div>
 
-          <input
-            id="power"
-            type="range"
-            min="0"
-            max="100"
-            value="50"
-            step="5"
-            tabindex="-1"
-            aria-label="Potencia del motor"
-          />
-        </div>
+          <!-- DIRECCIONES -->
 
-        <!-- DIRECCIONES -->
+          <div class="dpad">
+            <button
+              type="button"
+              class="control-button forward"
+              data-direction="forward"
+              aria-label="Adelante"
+            >
+              ▲
+            </button>
 
-        <div class="dpad">
-          <button
-            type="button"
-            class="control-button forward"
-            data-direction="forward"
-            aria-label="Adelante"
-          >
-            ▲
-          </button>
+            <button
+              type="button"
+              class="control-button left"
+              data-direction="left"
+              aria-label="Izquierda"
+            >
+              ◀
+            </button>
 
-          <button
-            type="button"
-            class="control-button left"
-            data-direction="left"
-            aria-label="Izquierda"
-          >
-            ◀
-          </button>
+            <button
+              type="button"
+              id="stopButton"
+              class="control-button stop"
+              aria-label="Detener"
+            >
+              ■
+            </button>
 
-          <button
-            type="button"
-            id="stopButton"
-            class="control-button stop"
-            aria-label="Detener"
-          >
-            ■
-          </button>
+            <button
+              type="button"
+              class="control-button right"
+              data-direction="right"
+              aria-label="Derecha"
+            >
+              ▶
+            </button>
 
-          <button
-            type="button"
-            class="control-button right"
-            data-direction="right"
-            aria-label="Derecha"
-          >
-            ▶
-          </button>
+            <button
+              type="button"
+              class="control-button backward"
+              data-direction="backward"
+              aria-label="Atrás"
+            >
+              ▼
+            </button>
+          </div>
 
-          <button
-            type="button"
-            class="control-button backward"
-            data-direction="backward"
-            aria-label="Atras"
-          >
-            ▼
-          </button>
-        </div>
+          <!-- AYUDA -->
 
-        <!-- AYUDA -->
+          <div class="legend">
+            <span class="legend-label">Teclado</span>
 
-        <div class="help">
-          <span>Teclado:</span>
-          <kbd>W</kbd>
-          <kbd>A</kbd>
-          <kbd>S</kbd>
-          <kbd>D</kbd>
-          <span>o flechas</span>
-        </div>
-      </section>
-    </main>
+            <kbd>W</kbd>
+            <kbd>A</kbd>
+            <kbd>S</kbd>
+            <kbd>D</kbd>
+
+            <span class="legend-note">o las flechas</span>
+          </div>
+        </section>
+      </main>
+    </div>
 
     <script src="{{ url_for('static', filename='app.js') }}"></script>
   </body>

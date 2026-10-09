@@ -1,0 +1,6 @@
+# Herramientas de desarrollo (no se instalan en la Raspberry Pi).
+black
+ruff
+mypy
+pytest
+pytest-cov
