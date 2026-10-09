@@ -325,7 +325,7 @@ output {
 .deck {
     display: flex;
     flex-direction: column;
-    gap: clamp(18px, 2.2vw, 24px);
+    gap: clamp(12px, 1.6vw, 16px);
     padding: clamp(16px, 2vw, 22px);
     border-radius: var(--radius);
     background: linear-gradient(
@@ -583,136 +583,13 @@ kbd {
     text-align: center;
 }
 
-/* ============================================================
-   CABINA V2 · instrumentos de escritorio y tablet
-   ============================================================ */
+/* Filetes de panel entre secciones del deck */
 
-@media (min-width: 561px) {
-    /* Maneta vertical + medidores por rueda */
-
-    .instrument {
-        display: flex;
-        align-items: stretch;
-        gap: clamp(16px, 2.2vw, 24px);
-    }
-
-    .throttle-vertical {
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        gap: 10px;
-        flex: 0 0 auto;
-        width: 88px;
-    }
-
-    .throttle-vertical .throttle-head {
-        flex-direction: column;
-        align-items: center;
-        gap: 2px;
-        margin-bottom: 0;
-    }
-
-    .throttle-vertical .throttle-track {
-        width: 100%;
-        height: clamp(140px, 24vh, 220px);
-        cursor: ns-resize;
-        touch-action: none;
-        user-select: none;
-    }
-
-    .throttle-vertical .throttle-fill {
-        top: auto;
-        right: 0;
-        bottom: 0;
-        left: 0;
-        width: auto;
-        height: var(--level, 50%);
-        background: linear-gradient(
-            0deg,
-            rgba(240, 169, 59, 0.3),
-            var(--signal)
-        );
-    }
-
-    .throttle-vertical .throttle-ticks {
-        background-image: repeating-linear-gradient(
-            180deg,
-            transparent 0,
-            transparent calc(10% - 1px),
-            rgba(9, 15, 19, 0.8) calc(10% - 1px),
-            rgba(9, 15, 19, 0.8) 10%
-        );
-    }
-
-    .throttle-vertical input[type="range"] {
-        opacity: 0;
-        pointer-events: none;
-    }
-
-    .wheel-meters {
-        flex: 1 1 auto;
-        display: flex;
-        align-items: stretch;
-        justify-content: center;
-        gap: clamp(16px, 2.4vw, 24px);
-    }
-
-    .meter {
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        gap: 8px;
-    }
-
-    .meter-label {
-        font-family: var(--font-mono);
-        font-size: 0.78rem;
-        color: var(--ink-dim);
-    }
-
-    .meter-bar {
-        position: relative;
-        width: 20px;
-        flex: 1 1 auto;
-        min-height: 130px;
-        max-height: 230px;
-        border-radius: 10px;
-        background: #090f13;
-        border: 1px solid var(--line);
-        box-shadow: inset 0 2px 7px rgba(0, 0, 0, 0.6);
-        overflow: hidden;
-    }
-
-    .meter-fill {
-        position: absolute;
-        inset: auto 0 0 0;
-        width: 100%;
-        height: var(--fill, 0%);
-        background: linear-gradient(
-            0deg,
-            rgba(240, 169, 59, 0.35),
-            var(--signal-hi)
-        );
-        transition: height 0.12s ease;
-    }
-
-    .meter-value {
-        font-family: var(--font-mono);
-        font-size: 0.78rem;
-        color: var(--ink-faint);
-    }
-
-    /* Filetes de panel entre secciones del deck */
-
-    .deck {
-        gap: clamp(10px, 1.4vw, 14px);
-    }
-
-    .deck > :not(:first-child) {
-        border-top: 1px solid var(--line-soft);
-        padding-top: clamp(10px, 1.4vw, 16px);
-    }
+.deck > :not(:first-child) {
+    border-top: 1px solid var(--line-soft);
+    padding-top: 14px;
 }
+
 
 /* ============================================================
    MOVIMIENTO
@@ -890,8 +767,8 @@ body.night kbd {
 
     .deck {
         flex: 0 0 auto;
-        gap: 10px;
-        padding: 12px 12px 10px;
+        gap: 14px;
+        padding: 14px 14px 12px;
     }
 
     .deck > :not(:first-child) {
@@ -899,60 +776,17 @@ body.night kbd {
         padding-top: 0;
     }
 
-    .instrument {
-        flex-direction: column;
-        gap: 8px;
-    }
-
-    .throttle-head {
-        margin-bottom: 6px;
-    }
-
-    .throttle-track {
-        height: 38px;
-    }
-
-    .wheel-meters {
-        gap: 10px;
-    }
-
-    .meter {
-        flex-direction: row;
-        align-items: center;
-        gap: 5px;
-        flex: 1 1 auto;
-    }
-
-    .meter-bar {
-        width: auto;
-        height: 8px;
-        min-height: 0;
-        max-height: none;
-        border-radius: 4px;
-    }
-
-    .meter-fill {
-        inset: 0 auto 0 0;
-        width: var(--fill, 0%);
-        height: 100%;
-    }
-
-    .meter-label,
-    .meter-value {
-        font-size: 0.7rem;
-    }
-
     .dpad {
-        max-width: 232px;
+        max-width: 240px;
     }
 
     .throttle-value {
-        font-size: 1.2rem;
+        font-size: 1.3rem;
     }
 
     .legend {
         gap: 5px;
-        font-size: 0.72rem;
+        font-size: 0.74rem;
     }
 
     kbd {
