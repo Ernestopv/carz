@@ -204,7 +204,10 @@ output {
     overflow: hidden;
     background: #05080a;
     border: 1px solid var(--line);
+    /* bisel de monitor de campo */
     box-shadow:
+        0 0 0 7px var(--panel),
+        0 0 0 8px var(--line-soft),
         0 22px 55px rgba(0, 0, 0, 0.5),
         inset 0 1px 0 rgba(255, 255, 255, 0.04);
 }
@@ -367,6 +370,7 @@ output {
 
 .throttle-track {
     position: relative;
+    --level: 50%;
     height: 46px;
     border-radius: var(--radius-sm);
     background: #090f13;
@@ -379,7 +383,7 @@ output {
     top: 0;
     bottom: 0;
     left: 0;
-    width: 50%;
+    width: var(--level, 50%);
     border-radius: var(--radius-sm);
     background: linear-gradient(
         90deg,
@@ -387,7 +391,9 @@ output {
         var(--signal)
     );
     box-shadow: 0 0 20px rgba(240, 169, 59, 0.35);
-    transition: width 0.08s linear;
+    transition:
+        width 0.08s linear,
+        height 0.08s linear;
 }
 
 .throttle-ticks {
@@ -502,6 +508,12 @@ output {
     border-color: rgba(229, 72, 59, 0.5);
     color: var(--stop-hi);
     font-size: clamp(1.05rem, 3.2vw, 1.4rem);
+    /* anillo de seguridad */
+    box-shadow:
+        inset 0 0 0 2px rgba(229, 72, 59, 0.3),
+        inset 0 0 0 8px rgba(229, 72, 59, 0.07),
+        inset 0 1px 0 rgba(255, 255, 255, 0.06),
+        0 6px 14px rgba(0, 0, 0, 0.38);
 }
 
 .control-button.stop:active,
@@ -569,6 +581,137 @@ kbd {
     font-family: var(--font-mono);
     font-size: 0.82rem;
     text-align: center;
+}
+
+/* ============================================================
+   CABINA V2 · instrumentos de escritorio y tablet
+   ============================================================ */
+
+@media (min-width: 561px) {
+    /* Maneta vertical + medidores por rueda */
+
+    .instrument {
+        display: flex;
+        align-items: stretch;
+        gap: clamp(16px, 2.2vw, 24px);
+    }
+
+    .throttle-vertical {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 10px;
+        flex: 0 0 auto;
+        width: 88px;
+    }
+
+    .throttle-vertical .throttle-head {
+        flex-direction: column;
+        align-items: center;
+        gap: 2px;
+        margin-bottom: 0;
+    }
+
+    .throttle-vertical .throttle-track {
+        width: 100%;
+        height: clamp(140px, 24vh, 220px);
+        cursor: ns-resize;
+        touch-action: none;
+        user-select: none;
+    }
+
+    .throttle-vertical .throttle-fill {
+        top: auto;
+        right: 0;
+        bottom: 0;
+        left: 0;
+        width: auto;
+        height: var(--level, 50%);
+        background: linear-gradient(
+            0deg,
+            rgba(240, 169, 59, 0.3),
+            var(--signal)
+        );
+    }
+
+    .throttle-vertical .throttle-ticks {
+        background-image: repeating-linear-gradient(
+            180deg,
+            transparent 0,
+            transparent calc(10% - 1px),
+            rgba(9, 15, 19, 0.8) calc(10% - 1px),
+            rgba(9, 15, 19, 0.8) 10%
+        );
+    }
+
+    .throttle-vertical input[type="range"] {
+        opacity: 0;
+        pointer-events: none;
+    }
+
+    .wheel-meters {
+        flex: 1 1 auto;
+        display: flex;
+        align-items: stretch;
+        justify-content: center;
+        gap: clamp(16px, 2.4vw, 24px);
+    }
+
+    .meter {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 8px;
+    }
+
+    .meter-label {
+        font-family: var(--font-mono);
+        font-size: 0.78rem;
+        color: var(--ink-dim);
+    }
+
+    .meter-bar {
+        position: relative;
+        width: 20px;
+        flex: 1 1 auto;
+        min-height: 130px;
+        max-height: 230px;
+        border-radius: 10px;
+        background: #090f13;
+        border: 1px solid var(--line);
+        box-shadow: inset 0 2px 7px rgba(0, 0, 0, 0.6);
+        overflow: hidden;
+    }
+
+    .meter-fill {
+        position: absolute;
+        inset: auto 0 0 0;
+        width: 100%;
+        height: var(--fill, 0%);
+        background: linear-gradient(
+            0deg,
+            rgba(240, 169, 59, 0.35),
+            var(--signal-hi)
+        );
+        transition: height 0.12s ease;
+    }
+
+    .meter-value {
+        font-family: var(--font-mono);
+        font-size: 0.78rem;
+        color: var(--ink-faint);
+    }
+
+    /* Filetes de panel entre secciones del deck */
+
+    .deck {
+        gap: clamp(10px, 1.4vw, 14px);
+    }
+
+    .deck > :not(:first-child) {
+        border-top: 1px solid var(--line-soft);
+        padding-top: clamp(10px, 1.4vw, 16px);
+    }
 }
 
 /* ============================================================
@@ -649,6 +792,8 @@ body.night .control-button.stop.active {
 
 body.night .viewport-frame {
     box-shadow:
+        0 0 0 7px var(--panel),
+        0 0 0 8px var(--line-soft),
         0 14px 34px rgba(0, 0, 0, 0.5),
         inset 0 1px 0 rgba(255, 255, 255, 0.03);
 }
@@ -745,21 +890,69 @@ body.night kbd {
 
     .deck {
         flex: 0 0 auto;
-        gap: 14px;
-        padding: 14px 14px 12px;
+        gap: 10px;
+        padding: 12px 12px 10px;
+    }
+
+    .deck > :not(:first-child) {
+        border-top: 0;
+        padding-top: 0;
+    }
+
+    .instrument {
+        flex-direction: column;
+        gap: 8px;
+    }
+
+    .throttle-head {
+        margin-bottom: 6px;
+    }
+
+    .throttle-track {
+        height: 38px;
+    }
+
+    .wheel-meters {
+        gap: 10px;
+    }
+
+    .meter {
+        flex-direction: row;
+        align-items: center;
+        gap: 5px;
+        flex: 1 1 auto;
+    }
+
+    .meter-bar {
+        width: auto;
+        height: 8px;
+        min-height: 0;
+        max-height: none;
+        border-radius: 4px;
+    }
+
+    .meter-fill {
+        inset: 0 auto 0 0;
+        width: var(--fill, 0%);
+        height: 100%;
+    }
+
+    .meter-label,
+    .meter-value {
+        font-size: 0.7rem;
     }
 
     .dpad {
-        max-width: 240px;
+        max-width: 232px;
     }
 
     .throttle-value {
-        font-size: 1.3rem;
+        font-size: 1.2rem;
     }
 
     .legend {
         gap: 5px;
-        font-size: 0.74rem;
+        font-size: 0.72rem;
     }
 
     kbd {

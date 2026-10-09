@@ -4,8 +4,12 @@ const stopButton = document.getElementById("stopButton");
 const controlButtons = document.querySelectorAll("[data-direction]");
 const statusDot = document.getElementById("statusDot");
 const statusText = document.getElementById("statusText");
-const throttleFill = document.getElementById("throttleFill");
+const throttleTrack = document.getElementById("throttleTrack");
 const osdPower = document.getElementById("osdPower");
+const meterLeft = document.getElementById("meterLeft");
+const meterRight = document.getElementById("meterRight");
+const meterLeftValue = document.getElementById("meterLeftValue");
+const meterRightValue = document.getElementById("meterRightValue");
 const camera = document.getElementById("camera");
 const viewport = document.getElementById("viewport");
 const nightToggle = document.getElementById("nightToggle");
@@ -37,7 +41,9 @@ powerSlider.addEventListener("focus", () => {
 function renderPower(value) {
   powerValue.textContent = value;
   osdPower.textContent = value;
-  throttleFill.style.width = `${value}%`;
+  throttleTrack.style.setProperty("--level", `${value}%`);
+  throttleTrack.setAttribute("aria-valuenow", String(value));
+  throttleTrack.setAttribute("aria-valuetext", `${value} por ciento`);
 }
 
 powerSlider.addEventListener("input", () => {
@@ -53,6 +59,87 @@ function currentPower() {
 }
 
 renderPower(powerSlider.value);
+
+// ============================================================
+// MEDIDORES POR RUEDA (datos reales de /api/move)
+// ============================================================
+
+function updateMeters(left, right) {
+  const leftPercent = Math.round(left * 100);
+  const rightPercent = Math.round(right * 100);
+
+  meterLeft.style.setProperty("--fill", `${leftPercent}%`);
+  meterRight.style.setProperty("--fill", `${rightPercent}%`);
+  meterLeftValue.textContent = leftPercent;
+  meterRightValue.textContent = rightPercent;
+}
+
+updateMeters(0, 0);
+
+// ============================================================
+// MANETA VERTICAL (escritorio)
+//
+// El slider nativo queda como fuente de verdad; en escritorio se
+// conduce con la maneta y en movil con el deslizador horizontal.
+// ============================================================
+
+function setupVerticalLever() {
+  const isVertical = () =>
+    window.matchMedia("(min-width: 561px)").matches;
+
+  let dragging = false;
+
+  function valueFromY(clientY) {
+    const rect = throttleTrack.getBoundingClientRect();
+    const ratio = 1 - (clientY - rect.top) / rect.height;
+    const stepped = Math.round((ratio * 100) / 5) * 5;
+
+    return Math.max(0, Math.min(100, stepped));
+  }
+
+  function apply(value) {
+    powerSlider.value = value;
+    renderPower(value);
+
+    if (activeDirection) {
+      sendMove(activeDirection);
+    }
+  }
+
+  throttleTrack.addEventListener("pointerdown", (event) => {
+    if (!isVertical()) {
+      return;
+    }
+
+    event.preventDefault();
+    throttleTrack.setPointerCapture(event.pointerId);
+    dragging = true;
+    apply(valueFromY(event.clientY));
+  });
+
+  throttleTrack.addEventListener("pointermove", (event) => {
+    if (dragging && isVertical()) {
+      apply(valueFromY(event.clientY));
+    }
+  });
+
+  function endDrag(event) {
+    if (dragging) {
+      dragging = false;
+
+      try {
+        throttleTrack.releasePointerCapture(event.pointerId);
+      } catch (error) {
+        // Puede no existir captura en algunos navegadores.
+      }
+    }
+  }
+
+  throttleTrack.addEventListener("pointerup", endDrag);
+  throttleTrack.addEventListener("pointercancel", endDrag);
+}
+
+setupVerticalLever();
 
 // ============================================================
 // CAMARA
@@ -245,10 +332,15 @@ async function postJSON(url, body = {}) {
 
 async function sendMove(direction) {
   try {
-    await postJSON("/api/move", {
+    const data = await postJSON("/api/move", {
       direction,
       power: currentPower(),
     });
+
+    updateMeters(
+      Number(data.motor1_speed || 0),
+      Number(data.motor2_speed || 0),
+    );
   } catch (error) {
     console.error("Error enviando movimiento:", error);
     setOffline();
@@ -258,6 +350,7 @@ async function sendMove(direction) {
 async function sendStop() {
   activeDirection = null;
   stopHeartbeat();
+  updateMeters(0, 0);
 
   document.querySelectorAll(".control-button.active").forEach((button) => {
     button.classList.remove("active");

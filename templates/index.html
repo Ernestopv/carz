@@ -84,32 +84,61 @@
         <!-- ================= DECK DE CONTROL ================= -->
 
         <section class="deck" aria-label="Controles del rover">
-          <!-- POTENCIA -->
+          <!-- INSTRUMENTOS: POTENCIA + RUEDAS -->
 
-          <div class="throttle">
-            <div class="throttle-head">
-              <label for="power">Potencia</label>
+          <div class="instrument">
+            <div class="throttle throttle-vertical">
+              <div class="throttle-head">
+                <label for="power">Potencia</label>
 
-              <output class="throttle-value" for="power">
-                <span id="powerValue">50</span
-                ><span class="unit">%</span>
-              </output>
+                <output class="throttle-value" for="power">
+                  <span id="powerValue">50</span
+                  ><span class="unit">%</span>
+                </output>
+              </div>
+
+              <div
+                class="throttle-track"
+                id="throttleTrack"
+                role="slider"
+                aria-label="Potencia del motor"
+                aria-valuemin="0"
+                aria-valuemax="100"
+                aria-valuenow="50"
+                aria-valuetext="50 por ciento"
+              >
+                <div class="throttle-fill" id="throttleFill"></div>
+                <div class="throttle-ticks" aria-hidden="true"></div>
+
+                <input
+                  id="power"
+                  type="range"
+                  min="0"
+                  max="100"
+                  value="50"
+                  step="5"
+                  tabindex="-1"
+                  aria-hidden="true"
+                />
+              </div>
             </div>
 
-            <div class="throttle-track">
-              <div class="throttle-fill" id="throttleFill"></div>
-              <div class="throttle-ticks" aria-hidden="true"></div>
+            <div class="wheel-meters">
+              <div class="meter">
+                <span class="meter-label">L</span>
+                <div class="meter-bar">
+                  <div class="meter-fill" id="meterLeft"></div>
+                </div>
+                <output class="meter-value" id="meterLeftValue">0</output>
+              </div>
 
-              <input
-                id="power"
-                type="range"
-                min="0"
-                max="100"
-                value="50"
-                step="5"
-                tabindex="-1"
-                aria-label="Potencia del motor"
-              />
+              <div class="meter">
+                <span class="meter-label">R</span>
+                <div class="meter-bar">
+                  <div class="meter-fill" id="meterRight"></div>
+                </div>
+                <output class="meter-value" id="meterRightValue">0</output>
+              </div>
             </div>
           </div>
 
